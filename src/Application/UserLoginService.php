@@ -18,6 +18,20 @@ class UserLoginService
         $this->loggedUsers[] = $user;
     }
 
+    public function login(string $userName, string $password): string
+    {
+        if($this->sessionManager->login($userName, $password))
+        {
+            $newUser = new User($userName);
+
+            $this->loggedUsers[] = $newUser;
+
+            return "Login correcto";
+        }
+
+        return "Login incorrecto";
+    }
+
     public function logout(User $user): string
     {
         if(in_array($user, $this->loggedUsers))

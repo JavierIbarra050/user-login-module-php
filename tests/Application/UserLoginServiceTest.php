@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 use UserLoginService\Application\SessionManager;
 use UserLoginService\Application\UserLoginService;
 use UserLoginService\Domain\User;
+use UserLoginService\Tests\Application\TestDoubles\SessionManagerDummy;
+use UserLoginService\Tests\Application\TestDoubles\SessionManagerStub;
 
 final class UserLoginServiceTest extends TestCase
 {
@@ -31,7 +33,7 @@ final class UserLoginServiceTest extends TestCase
      */
     public function givenUserWhoIsAlreadyLoggedInReturnsErrorException()
     {
-        $sessionManagerDummy = $this->createMock(SessionManager::class);
+        $sessionManagerDummy = new SessionManagerDummy();
         $userLoginService = new UserLoginService($sessionManagerDummy);
 
         $user = new User("username");
@@ -45,14 +47,12 @@ final class UserLoginServiceTest extends TestCase
      * @test
      */
     public function externalSessionsWorksRight(){
-        $sessionManagerStub = $this->createMock(SessionManager::class);
-        $sessionManagerStub->method('getSessions')->willReturn(2);
+        $sessionManagerStub = new SessionManagerStub();
 
         $userLoginService = new UserLoginService($sessionManagerStub);
         $result = $userLoginService->getExternalSessions();
 
         $this->assertEquals(2, $result);
-
     }
 
     /**
@@ -75,13 +75,13 @@ final class UserLoginServiceTest extends TestCase
      * @test
      */
     public function logoutFunctionWithNonExistingUserReturnsError(){
-        $sessionManagerDummy = $this->createMock(SessionManager::class);
+        $sessionManagerDummy = new SessionManagerDummy();
 
         $userLoginService = new UserLoginService($sessionManagerDummy);
 
         $user = new User("username");
-
         $answer = $userLoginService->logout($user);
+
         $this->assertEquals("User not found", $answer);
     }
 }

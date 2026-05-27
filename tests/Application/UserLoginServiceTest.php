@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 use UserLoginService\Application\SessionManager;
 use UserLoginService\Application\UserLoginService;
 use UserLoginService\Domain\User;
+use UserLoginService\Infrastructure\Exceptions\ServiceNotAvailableException;
+use UserLoginService\Infrastructure\Exceptions\UserNotLoggedInException;
 use UserLoginService\Tests\Application\TestDoubles\SessionManagerDummy;
 use UserLoginService\Tests\Application\TestDoubles\SessionManagerStub;
 
@@ -117,5 +119,38 @@ final class UserLoginServiceTest extends TestCase
         $answer = $userLoginService->login($username, $password);
 
         $this->assertEquals("Login incorrecto", $answer);
+    }
+
+    /**
+     * @test
+     */
+    public function givenServiceNotAvailableReturnsExceptionMessage(){
+        $sessionManagerMock = Mockery::mock(SessionManager::class);
+        $sessionManagerMock->expects("login")->with("username", "password")->andThrowExceptions([new ServiceNotAvailableException("Servicio no disponible")]);
+
+        $userLoginService = new UserLoginService($sessionManagerMock);
+
+        $username = "username";
+        $password = "password";
+        $userLoginService->login($username, $password);
+
+        $answer = $userLoginService->login($username, $password);
+        $this->assertEquals("Servicio no disponible", $answer);
+    }
+
+    /**
+     * @test
+     */
+    public function givenUserNotLoggedInReturnsExceptionMessage(){
+        $sessionManagerMock = Mockery::mock(SessionManager::class);
+        $sessionManagerMock->expects("login")->with("username", "password")->andThrowExceptions([new UserNotLoggedInException("Usuario no loggeado")]);
+
+        $userLoginService = new UserLoginService($sessionManagerMock);
+
+        $username = "username";
+        $password = "password";
+        $answer = $userLoginService->login($username, $password);
+
+        $this->assertEquals("Usuario no loggeado", $answer);
     }
 }

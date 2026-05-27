@@ -13,7 +13,7 @@ final class UserLoginServiceTest extends TestCase
     /**
      * @test
      */
-    public function userIsNotLoggedIn()
+    public function givenLoginOfUserWhoIsNotLoggedInReturnsArrayWithUser()
     {
         $userLoginService = new UserLoginService();
 
@@ -25,8 +25,9 @@ final class UserLoginServiceTest extends TestCase
 
     /**
      * @test
+     * @throws \Exception
      */
-    public function userIsLoggedIn()
+    public function givenUserWhoIsAlreadyLoggedInReturnsErrorException()
     {
         $userLoginService = new UserLoginService();
 

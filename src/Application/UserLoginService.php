@@ -9,6 +9,9 @@ class UserLoginService
 {
     private array $loggedUsers = [];
 
+    public function __construct(private SessionManager $sessionManager) {}
+
+
     public function manualLogin(User $user): void
     {
         if(in_array($user, $this->loggedUsers)) { throw new Exception("User already logged in"); }
@@ -19,5 +22,10 @@ class UserLoginService
     public function loggedUsers(): array
     {
         return $this->loggedUsers;
+    }
+
+    public function getExternalSessions(): int
+    {
+        return $this->sessionManager->getSessions();
     }
 }

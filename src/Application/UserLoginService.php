@@ -4,6 +4,8 @@ namespace UserLoginService\Application;
 
 use Exception;
 use UserLoginService\Domain\User;
+use UserLoginService\Infrastructure\Exceptions\ServiceNotAvailableException;
+use UserLoginService\Infrastructure\Exceptions\UserNotLoggedInException;
 
 class UserLoginService
 {
@@ -20,16 +22,23 @@ class UserLoginService
 
     public function login(string $userName, string $password): string
     {
-        if($this->sessionManager->login($userName, $password))
-        {
-            $newUser = new User($userName);
+        try {
+            if($this->sessionManager->login($userName, $password))
+            {
+                $newUser = new User($userName);
 
-            $this->loggedUsers[] = $newUser;
+                $this->loggedUsers[] = $newUser;
 
-            return "Login correcto";
+                return "Login correcto";
+            }
+
+            return "Login incorrecto";
+        } catch (ServiceNotAvailableException $e) {
+            return $e->getMessage();
+        } catch (UserNotLoggedInException $e) {
+            return $e->getMessage();
         }
 
-        return "Login incorrecto";
     }
 
     public function logout(User $user): string

@@ -54,4 +54,34 @@ final class UserLoginServiceTest extends TestCase
         $this->assertEquals(2, $result);
 
     }
+
+    /**
+     * @test
+     */
+    public function logoutFunctionWithExistingUserDeletesTheUser(){
+        $sessionManagerMock = $this->createMock(SessionManager::class);
+        $sessionManagerMock->expects($this->once())->method('logout');
+
+        $userLoginService = new UserLoginService($sessionManagerMock);
+
+        $user = new User("username");
+        $userLoginService->manualLogin($user);
+
+        $answer = $userLoginService->logout($user);
+        $this->assertEquals("ok", $answer);
+    }
+
+    /**
+     * @test
+     */
+    public function logoutFunctionWithNonExistingUserReturnsError(){
+        $sessionManagerDummy = $this->createMock(SessionManager::class);
+
+        $userLoginService = new UserLoginService($sessionManagerDummy);
+
+        $user = new User("username");
+
+        $answer = $userLoginService->logout($user);
+        $this->assertEquals("User not found", $answer);
+    }
 }

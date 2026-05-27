@@ -12,6 +12,8 @@ class FacebookSessionManager implements SessionManager
         return rand(0, 1) == 1;
     }
 
+    public function logout(string $userName): void {}
+
     public function getSessions(): int
     {
         //Imaginad que esto en realidad realiza una llamada al API de Facebook

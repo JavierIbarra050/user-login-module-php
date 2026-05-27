@@ -11,7 +11,6 @@ class UserLoginService
 
     public function __construct(private SessionManager $sessionManager) {}
 
-
     public function manualLogin(User $user): void
     {
         if(in_array($user, $this->loggedUsers)) { throw new Exception("User already logged in"); }
@@ -19,13 +18,24 @@ class UserLoginService
         $this->loggedUsers[] = $user;
     }
 
-    public function loggedUsers(): array
+    public function logout(User $user): string
     {
-        return $this->loggedUsers;
+        if(in_array($user, $this->loggedUsers))
+        {
+            $indice = array_search($user, $this->loggedUsers);
+            unset($this->loggedUsers[$indice]);
+
+            $this->sessionManager->logout($user->getUserName());
+
+            return "ok";
+        }
+
+        return "User not found";
     }
 
+    public function loggedUsers(): array
+    { return $this->loggedUsers; }
+
     public function getExternalSessions(): int
-    {
-        return $this->sessionManager->getSessions();
-    }
+    { return $this->sessionManager->getSessions(); }
 }

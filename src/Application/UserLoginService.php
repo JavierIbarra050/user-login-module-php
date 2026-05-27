@@ -11,7 +11,7 @@ class UserLoginService
 
     public function manualLogin(User $user): void
     {
-        if(in_array($user, $this->loggedUsers)) { Throw new Exception("User already logged in"); }
+        if(in_array($user, $this->loggedUsers)) { throw new Exception("User already logged in"); }
 
         $this->loggedUsers[] = $user;
     }
@@ -20,5 +20,4 @@ class UserLoginService
     {
         return $this->loggedUsers;
     }
-
 }

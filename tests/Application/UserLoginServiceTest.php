@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace UserLoginService\Tests\Application;
 
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use UserLoginService\Application\SessionManager;
 use UserLoginService\Application\UserLoginService;
@@ -83,5 +84,38 @@ final class UserLoginServiceTest extends TestCase
         $answer = $userLoginService->logout($user);
 
         $this->assertEquals("User not found", $answer);
+    }
+
+    /**
+     * @test
+     */
+    public function givenLoginNotExistingUserReturnsLoginCorrecto(){
+        $sessionManagerMock = Mockery::mock(SessionManager::class);
+        $sessionManagerMock->expects("login")->with("username", "password")->andReturn(true);
+
+        $userLoginService = new UserLoginService($sessionManagerMock);
+
+        $username = "username";
+        $password = "password";
+        $answer = $userLoginService->login($username, $password);
+
+        $this->assertEquals("Login correcto", $answer);
+    }
+
+    /**
+     * @test
+     */
+    public function givenLoginExistingUserReturnsError(){
+        $sessionManagerMock = Mockery::mock(SessionManager::class);
+        $sessionManagerMock->expects("login")->with("username", "password")->andReturn(false);
+
+        $userLoginService = new UserLoginService($sessionManagerMock);
+
+        $username = "username";
+        $password = "password";
+        $userLoginService->login($username, $password);
+        $answer = $userLoginService->login($username, $password);
+
+        $this->assertEquals("Login incorrecto", $answer);
     }
 }

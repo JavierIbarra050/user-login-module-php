@@ -2,6 +2,7 @@
 
 namespace UserLoginService\Tests\Application\TestDoubles;
 
+use Exception;
 use UserLoginService\Application\SessionManager;
 
 class SessionManagerStub implements SessionManager
@@ -14,7 +15,7 @@ class SessionManagerStub implements SessionManager
 
     public function login(string $userName, string $password): bool
     {
-        return true;
+        throw new Exception("Method not implemented");
     }
 
     public function logout(string $userName): void
